@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Formulaire de Paiement</title>
+    <script src="https://js.stripe.com/v3/"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background: linear-gradient(to bottom right, #1e3c72, #2a69ac); /* Dégradé bleu */
+            text-align: center;
+            color: #ffffff; /* Texte blanc */
+        }
+        h2 {
+            margin-top: 50px;
+            color: #fff; /* Couleur blanche pour le titre */
+        }
+        #payment-form {
+            max-width: 400px;
+            margin: 50px auto;
+            padding: 20px;
+            background-color: rgba(0, 0, 0, 0.8); /* Fond noir semi-transparent */
+            border-radius: 10px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+        }
+        #card-element {
+            border: 1px solid #ccc; /* Bordure grise */
+            padding: 10px;
+            border-radius: 4px;
+            margin-bottom: 20px;
+            background-color: #fff; /* Fond blanc pour le champ de carte */
+        }
+        button {
+            width: 100%;
+            padding: 10px;
+            border: none;
+            border-radius: 5px;
+            background-color: #4CAF50; /* Vert sombre */
+            color: white;
+            font-size: 18px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        button:hover {
+            background-color: #45a049; /* Vert plus clair au survol */
+        }
+        #payment-result {
+            margin-top: 20px;
+            font-weight: bold;
+        }
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f0f8ff; /* Couleur de fond claire */
+            text-align: center;
+        }
+        p {
+            margin-top: 40px;
+        }
+        a {
+            text-decoration: none; /* Supprimer le soulignement */
+            color: #ffffff; /* Couleur du texte du lien */
+            background-color: #4caf50; /* Couleur de fond du bouton */
+            padding: 10px 20px; /* Rembourrage autour du texte */
+            border-radius: 5px; /* Coins arrondis */
+            font-size: 18px; /* Taille de police */
+            transition: background-color 0.3s, transform 0.2s; /* Animation douce */
+        }
+        a:hover {
+            background-color: #45a049; /* Couleur au survol */
+            transform: scale(1.05); /* Légère augmentation de taille au survol */
+        }
+    </style>
+</head>
+<body>
+
+<h2>Payer avec Stripe</h2>
+<form id="payment-form">
+    <div id="card-element"></div>
+    <button id="submit">Payer</button>
+    <div id="payment-result"></div>
+</form>
+
+<script>
+    const stripe = Stripe('pk_live_51QQUy4JaW797UxTsBXWvMJb3zPTf2x4PWZLEjJB4JnSDxvXZpNSYcBchATPSYyCYM1dZmjXLfFIXUYA5uy2ROqzw00oQE1T6OZ'); 
+    const elements = stripe.elements();
+    const cardElement = elements.create('card');
+    cardElement.mount('#card-element');
+
+    const form = document.getElementById('payment-form');
+    form.addEventListener('submit', async (event) => {
+        event.preventDefault();
+
+        const { error, paymentMethod } = await stripe.createPaymentMethod({
+            type: 'card',
+            card: cardElement,
+        });
+
+        if (error) {
+            document.getElementById('payment-result').textContent = error.message;
+        } else {
+            document.getElementById('payment-result').textContent = 'Paiement réussi ! ID: ' + paymentMethod.id;
+            // Ici, vous pouvez envoyer paymentMethod.id à votre serveur pour le traitement
+        }
+    });
+</script>
+<p><a href="index.html">revenir a l'accueil</a></p>
+
+</body>
+
+</html>

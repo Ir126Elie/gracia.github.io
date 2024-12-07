@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Formulaire de Contact</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background: url('https://example.com/path-to-house-image.jpg') no-repeat center center fixed; /* Remplacez par l'URL de l'image */
+            background-size: cover;
+            color: white;
+        }
+        header {
+            text-align: center;
+            margin: 20px;
+            background-color: rgba(0, 0, 0, 0.7);
+            padding: 20px;
+            border-radius: 10px;
+        }
+        h1 {
+            margin-bottom: 20px;
+        }
+        .link-container {
+            margin-bottom: 20px;
+        }
+        a {
+            text-decoration: none;
+            font-weight: bold;
+            padding: 10px 15px;
+            border-radius: 5px;
+            margin: 10px;
+            display: inline-block;
+        }
+        .whatsapp-link {
+            background-color: #25d366; 
+            color: white;
+        }
+        .payment-link {
+            background-color: #28a745; 
+            color: white;
+        }
+        .sms-link {
+            background-color: #007bff; 
+        }
+        .link-container a:hover {
+            opacity: 0.8;
+        }
+        form {
+            max-width: 400px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: rgba(0, 0, 0, 0.8);
+            border-radius: 10px;
+            border: 1px solid #ae0f0f;
+        }
+        label {
+            display: block;
+            margin-bottom: 8px;
+        }
+        input, textarea {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 10px;
+            border: 1px solid #a52222;
+            border-radius: 4px;
+        }
+        button {
+            padding: 10px 15px;
+            background-color: #5cb85c;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            width: 100%;
+        }
+        button:hover {
+            background-color: #4cae4c;
+        }
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f0f8ff; /* Couleur de fond claire */
+            text-align: center;
+        }
+        p {
+            margin-top: 40px;
+        }
+        a {
+            text-decoration: none; /* Supprimer le soulignement */
+            color: #ffffff; /* Couleur du texte du lien */
+            background-color: #4caf50; /* Couleur de fond du bouton */
+            padding: 10px 20px; /* Rembourrage autour du texte */
+            border-radius: 5px; /* Coins arrondis */
+            font-size: 18px; /* Taille de police */
+            transition: background-color 0.3s, transform 0.2s; /* Animation douce */
+        }
+        a:hover {
+            background-color: #45a049; /* Couleur au survol */
+            transform: scale(1.05); /* Légère augmentation de taille au survol */
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Contactez-nous</h1>
+        <div class="link-container">
+            <a class="whatsapp-link" href="https://wa.me/+25765884105?text=Bonjour%20je%20souhaite%20des%20informations" target="_blank">
+                <i class="fab fa-whatsapp"></i> Envoyer un message sur WhatsApp
+            </a>
+            <a class="payment-link" href="paiement.html">Payez avec Stripe</a>
+            <a class="sms-link" href="sms.html">Envoyez un SMS</a>
+        </div>
+    </header>
+    <form id="contactForm">
+        <label for="nom">Nom :</label>
+        <input type="text" id="nom" name="nom" required>
+
+        <label for="email">Email :</label>
+        <input type="email" id="email" name="email" required>
+
+        <label for="sujet">Sujet :</label>
+        <input type="text" id="sujet" name="sujet" required>
+
+        <label for="message">Message :</label>
+        <textarea id="message" name="message" rows="4" required></textarea>
+
+        <button type="submit">Envoyer</button>
+    </form>
+    <p><a href="index.html">revenir a l'accueil</a></p>
+
+    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-firestore.js"></script>
+    <script>
+        // Configuration Firebase
+        const firebaseConfig = {
+            apiKey: "AIzaSyCWynOjFO9CTZYnjoWpfxFYafkc8zEeJmU",
+            authDomain: "gestion-6df2c.firebaseapp.com",
+            databaseURL: "https://gestion-6df2c-default-rtdb.firebaseio.com",
+            projectId: "gestion-6df2c",
+            storageBucket: "gestion-6df2c.firebasestorage.app",
+            messagingSenderId: "67058220418",
+            appId: "1:67058220418:web:93f663076832b0397aa39b"
+        };
+
+        // Initialiser Firebase
+        const app = firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
+
+        // Écouteur d'événement pour le formulaire
+        document.getElementById('contactForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+
+            // Récupérer les valeurs du formulaire
+            const nom = document.getElementById('nom').value;
+            const email = document.getElementById('email').value;
+            const sujet = document.getElementById('sujet').value;
+            const message = document.getElementById('message').value;
+
+            // Ajouter les données à Firestore
+            db.collection("contacts").add({
+                nom: nom,
+                email: email,
+                sujet: sujet,
+                message: message
+            })
+            .then(() => {
+                alert("Votre message a été envoyé avec succès !");
+                document.getElementById('contactForm').reset(); // Réinitialiser le formulaire
+            })
+            .catch((error) => {
+                alert("Erreur lors de l'envoi : " + error.message);
+            });
+        });
+    </script>
+</body>
+</html>
